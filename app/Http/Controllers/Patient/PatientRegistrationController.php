@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Patient;
 use App\Enums\ActiveStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PatientRegisterRequest;
-use App\Models\Patient;
 use App\Models\VaccineCenter;
+use App\Services\PatientRegistrationService;
 
 class PatientRegistrationController extends Controller
 {
@@ -20,11 +20,11 @@ class PatientRegistrationController extends Controller
         return view('patient.register', ['vaccineCenters' => $vaccineCenters]);
     }
 
-    public function store(PatientRegisterRequest $request)
+    public function store(PatientRegisterRequest $request, PatientRegistrationService $patientRegistrationService)
     {
         $validated = $request->validated();
-        $patient = Patient::create($validated);
-        
+        $patient = $patientRegistrationService->register($validated);
+
         if ($patient) {
             return redirect()->back()->with('success', 'Your have been registered successfully!');
         } else {
